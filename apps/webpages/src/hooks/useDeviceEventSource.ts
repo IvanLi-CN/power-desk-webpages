@@ -55,7 +55,7 @@ export const useDeviceEventSource = (
     if (!es) {
       es = {
         refCount: 0,
-        eventSource: new EventSource(`/api/v1/devices/${deviceId}`),
+        eventSource: new EventSource(`/api/devices/${deviceId}`),
       };
 
       eventSourceMap.set(deviceId, es);

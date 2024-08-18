@@ -8,9 +8,9 @@ export default defineConfig(({ mode }) => {
     plugins: [react()],
     server: {
       proxy: {
-        "/api/v1": {
+        "/api": {
           target: env.API_URL || "http://localhost:24081",
-          rewrite: (path) => path.replace(/^\/api\/v1/, ""),
+          rewrite: (path) => path.replace(/^\/api/, ""),
           changeOrigin: true,
           ws: true,
           timeout: 0,
