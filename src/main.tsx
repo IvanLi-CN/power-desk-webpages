@@ -5,6 +5,7 @@ import "./tailwind.css";
 import "./index.css";
 import invariant from "tiny-invariant";
 import "./i18n.ts";
+import "chart.js/auto";
 
 const rootEl = document.getElementById("root");
 

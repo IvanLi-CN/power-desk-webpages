@@ -23,9 +23,9 @@ export default function Index() {
       </div>
 
       <div className="grid 3xl:grid-cols-2 grid-cols-1 gap-4">
-        {/* <ChartWrapper title="Temperature">
+        <ChartWrapper title="Temperature">
           <TemperatureChart deviceId={deviceId} />
-        </ChartWrapper> */}
+        </ChartWrapper>
         <ChartWrapper title="Channel 0">
           <ChannelChart deviceId={deviceId} channel={0} />
         </ChartWrapper>

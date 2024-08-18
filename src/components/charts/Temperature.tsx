@@ -12,9 +12,10 @@ import {
   Title,
   Tooltip,
 } from "chart.js";
+import { ReactChart } from "chartjs-react";
+import { format } from "date-fns";
 import { type FC, useCallback, useMemo } from "react";
-import { useDeviceEventSource } from "../../hooks/device-event-source.ts";
-import { Chart } from "../Chart.client";
+import { useDeviceTemperaturesEventSource } from "../../hooks/useDeviceEventSource.ts";
 
 ChartJS.register(
   Title,
@@ -79,25 +80,33 @@ const TemperatureChart: FC<TemperatureChartProps> = ({ deviceId }) => {
             suggestedMax: 40,
           },
         },
+        plugins: {
+          decimation: {
+            enabled: true,
+            algorithm: "lttb",
+          },
+        },
       }) satisfies ChartOptions,
     [],
   );
 
-  const updateTemperature = useCallback(() => {
-    //  const temperature = deserializeTemperature(message);
-    // data.labels.push(format(Date.now(), "HH:mm:ss"));
-    // data.datasets[0].data.push(temperature);
-    // ChartJS.getChart(chartId)?.update();
-    // if (data.labels.length > 60 * 30) {
-    //   data.labels.shift();
-    //   data.datasets[0].data.shift();
-    // }
-  }, []);
+  const updateTemperatures = useCallback(
+    (temperature: number[]) => {
+      data.labels.push(format(Date.now(), "HH:mm:ss"));
+      data.datasets[0].data.push(temperature[0]);
+      ChartJS.getChart(chartId)?.update();
+      if (data.labels.length > 60 * 30) {
+        data.labels.shift();
+        data.datasets[0].data.shift();
+      }
+    },
+    [data, chartId],
+  );
 
-  useDeviceEventSource(deviceId, updateTemperature);
+  useDeviceTemperaturesEventSource(deviceId, updateTemperatures);
 
   return (
-    <Chart
+    <ReactChart
       id={chartId}
       type="line"
       data={data}

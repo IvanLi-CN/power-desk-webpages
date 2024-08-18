@@ -12,11 +12,11 @@ import {
   Title,
   Tooltip,
 } from "chart.js";
+import { ReactChart } from "chartjs-react";
 import { format } from "date-fns";
 import { type FC, useCallback, useMemo } from "react";
-import { useDeviceEventSource } from "../../hooks/device-event-source.ts";
+import { useDeviceSeriesEventSource } from "../../hooks/useDeviceEventSource.ts";
 import type { ChargeChannelSeriesItem } from "../../models/charge-channel-series-item.ts";
-import { Chart } from "../Chart.client";
 
 ChartJS.register(
   Title,
@@ -111,6 +111,12 @@ const ChannelChart: FC<ChannelChartProps> = ({ deviceId, channel }) => {
           mode: "index",
           intersect: false,
         },
+        plugins: {
+          decimation: {
+            enabled: true,
+            algorithm: "lttb",
+          },
+        },
       }) satisfies ChartOptions,
     [],
   );
@@ -136,10 +142,10 @@ const ChannelChart: FC<ChannelChartProps> = ({ deviceId, channel }) => {
     [deviceId, channel, data, chartId],
   );
 
-  useDeviceEventSource(deviceId, updateSeriesItem);
+  useDeviceSeriesEventSource(deviceId, updateSeriesItem);
 
   return (
-    <Chart
+    <ReactChart
       id={chartId}
       type="line"
       data={data}

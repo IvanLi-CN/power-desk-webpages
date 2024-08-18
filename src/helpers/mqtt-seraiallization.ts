@@ -3,8 +3,29 @@ import type { ChargeChannelSeriesItem } from "../models/charge-channel-series-it
 import { ProtocolIndicationResponse } from "../models/protocol-indication.ts";
 import { SystemStatusResponse } from "../models/system-status.ts";
 
-export function deserializeTemperature(message: Uint8Array) {
-  return new DataView(message.buffer).getFloat32(message.byteOffset, true);
+export function deserializeTemperatures(message: string) {
+  const data: {
+    timestamp: number;
+    channel: number;
+    deviceId: string;
+    values: string;
+  } = JSON.parse(message);
+  const decodedStr = atob(data.values);
+  const buff = new Uint8Array(decodedStr.length);
+
+  for (let i = 0; i < decodedStr.length; i++) {
+    buff[i] = decodedStr.charCodeAt(i);
+  }
+
+  const dv = new DataView(buff.buffer);
+
+  const temperatures: number[] = [];
+  for (let i = 0; i < buff.length; i += 8) {
+    const temperature = dv.getFloat32(buff.byteOffset + i, true);
+    temperatures.push(temperature);
+  }
+
+  return temperatures;
 }
 
 export function deserializeChargeChannelSeriesItem(
