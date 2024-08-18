@@ -31,7 +31,7 @@ const ChannelStats: FC<ChannelStatsProps> = ({ deviceId, channel }) => {
   useDeviceEventSource(deviceId, updateSeriesItem);
 
   return (
-    <div className="stats shadow w-full h-full">
+    <div className="stats shadow w-full h-full stats-vertical lg:grid-cols-4 lg:stats-horizontal">
       <div className="stat">
         <div className="stat-title uppercase">{t("common:voltage")}</div>
         <div className="stat-value font-mono">
@@ -98,15 +98,13 @@ const ChannelStats: FC<ChannelStatsProps> = ({ deviceId, channel }) => {
                 `protocol.${ProtocolIndication[seriesItem?.values.protocol?.protocol ?? ProtocolIndication.Unknown]}`,
               )}
               {seriesItem?.values.protocol?.protocol &&
-                [ProtocolIndication.PdFix, ProtocolIndication.PdFix].includes(
+                [ProtocolIndication.PdFix, ProtocolIndication.PdPps].includes(
                   seriesItem?.values.protocol?.protocol,
                 ) && (
-                  <small className="ml-2 font-extralight">
-                    (
+                  <small className="ml-2 font-extralight text-sm">
                     {t(
                       `pd-version.${PdVersion[seriesItem?.values.protocol?.pdVersion]}`,
                     )}
-                    )
                   </small>
                 )}
             </span>
