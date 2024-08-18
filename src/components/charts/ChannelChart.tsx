@@ -15,6 +15,7 @@ import {
 import { ReactChart } from "chartjs-react";
 import { format } from "date-fns";
 import { type FC, useCallback, useMemo } from "react";
+import { useDebounceCallback } from "usehooks-ts";
 import { useDeviceSeriesEventSource } from "../../hooks/useDeviceEventSource.ts";
 import type { ChargeChannelSeriesItem } from "../../models/charge-channel-series-item.ts";
 
@@ -121,6 +122,14 @@ const ChannelChart: FC<ChannelChartProps> = ({ deviceId, channel }) => {
     [],
   );
 
+  const updateChart = useDebounceCallback(
+    useCallback(() => {
+      ChartJS.getChart(chartId)?.update();
+    }, [chartId]),
+    33,
+    { leading: true, trailing: true },
+  );
+
   const updateSeriesItem = useCallback(
     (value: ChargeChannelSeriesItem) => {
       if (value.channel === channel && value.deviceId === deviceId) {
@@ -136,10 +145,10 @@ const ChannelChart: FC<ChannelChartProps> = ({ deviceId, channel }) => {
         data.datasets[1].data.push(value.values.amps);
         data.datasets[2].data.push(value.values.watts);
 
-        ChartJS.getChart(chartId)?.update();
+        updateChart();
       }
     },
-    [deviceId, channel, data, chartId],
+    [deviceId, channel, data, updateChart],
   );
 
   useDeviceSeriesEventSource(deviceId, updateSeriesItem);

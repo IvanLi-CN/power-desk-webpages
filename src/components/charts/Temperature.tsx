@@ -15,6 +15,7 @@ import {
 import { ReactChart } from "chartjs-react";
 import { format } from "date-fns";
 import { type FC, useCallback, useMemo } from "react";
+import { useDebounceCallback } from "usehooks-ts";
 import { useDeviceTemperaturesEventSource } from "../../hooks/useDeviceEventSource.ts";
 
 ChartJS.register(
@@ -90,17 +91,27 @@ const TemperatureChart: FC<TemperatureChartProps> = ({ deviceId }) => {
     [],
   );
 
+  const updateChart = useDebounceCallback(
+    useCallback(() => {
+      ChartJS.getChart(chartId)?.update();
+    }, [chartId]),
+    33,
+    { leading: true, trailing: true },
+  );
+
   const updateTemperatures = useCallback(
     (temperature: number[]) => {
       data.labels.push(format(Date.now(), "HH:mm:ss"));
       data.datasets[0].data.push(temperature[0]);
-      ChartJS.getChart(chartId)?.update();
+
       if (data.labels.length > 60 * 30) {
         data.labels.shift();
         data.datasets[0].data.shift();
       }
+
+      updateChart();
     },
-    [data, chartId],
+    [data, updateChart],
   );
 
   useDeviceTemperaturesEventSource(deviceId, updateTemperatures);

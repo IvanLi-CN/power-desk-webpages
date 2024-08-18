@@ -5,6 +5,7 @@ import { mergeDeepLeft } from "ramda";
 import type { FC } from "react";
 import { useCallback, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { useDebounceCallback } from "usehooks-ts";
 import { useChartColors } from "../../hooks/useChartColors.js";
 import { useDeviceSeriesEventSource } from "../../hooks/useDeviceEventSource.js";
 import type { ChargeChannelSeriesItem } from "../../models/charge-channel-series-item.js";
@@ -211,6 +212,37 @@ const ChannelStats: FC<ChannelStatsProps> = ({ deviceId, channel }) => {
     [chartColors],
   );
 
+  const updateVoltageChart = useDebounceCallback(
+    useCallback(
+      () => ChartJS.getChart(voltageChartId)?.update(),
+      [voltageChartId],
+    ),
+    33,
+    {
+      leading: true,
+      trailing: true,
+    },
+  );
+  const updateCurrentChart = useDebounceCallback(
+    useCallback(
+      () => ChartJS.getChart(currentChartId)?.update(),
+      [currentChartId],
+    ),
+    100,
+    {
+      leading: true,
+      trailing: true,
+    },
+  );
+  const updatePowerChart = useDebounceCallback(
+    useCallback(() => ChartJS.getChart(powerChartId)?.update(), [powerChartId]),
+    100,
+    {
+      leading: true,
+      trailing: true,
+    },
+  );
+
   const updateSeriesItem = useCallback(
     (value: ChargeChannelSeriesItem) => {
       if (value.channel === channel && value.deviceId === deviceId) {
@@ -238,9 +270,9 @@ const ChannelStats: FC<ChannelStatsProps> = ({ deviceId, channel }) => {
         powerData.datasets[0].data.push(value.values.watts);
         powerData.datasets[1].data.push(value.values.limit_watts);
 
-        ChartJS.getChart(voltageChartId)?.update();
-        ChartJS.getChart(currentChartId)?.update();
-        ChartJS.getChart(powerChartId)?.update();
+        updateVoltageChart();
+        updateCurrentChart();
+        updatePowerChart();
       }
     },
     [
@@ -249,9 +281,9 @@ const ChannelStats: FC<ChannelStatsProps> = ({ deviceId, channel }) => {
       voltageData,
       currentData,
       powerData,
-      voltageChartId,
-      currentChartId,
-      powerChartId,
+      updateVoltageChart,
+      updateCurrentChart,
+      updatePowerChart,
     ],
   );
 
