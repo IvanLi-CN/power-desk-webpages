@@ -26,5 +26,6 @@ COPY ./apps/webpages/dist ../webpages/dist
 # run the app
 USER bun
 ENV DB_PATH="/home/bun/.power-desk/db.sqlite"
+ENV PORT=24081
 EXPOSE 24081/tcp
 ENTRYPOINT [ "bun", "run", "./src/index.ts" ]

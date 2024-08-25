@@ -30,5 +30,16 @@ export const charge_channel_series_items = sqliteTable(
   },
 );
 
+export const protector_series_items = sqliteTable("protector_series_items", {
+  id: integer("id").primaryKey(),
+  deviceId: text("device_id")
+    .notNull()
+    .references(() => devices.id),
+  timestamp: integer("timestamp").notNull(),
+  values: blob("values").notNull(),
+});
+
 export type ChargeChannelSeriesItem =
   typeof charge_channel_series_items.$inferSelect;
+
+export type ProtectorSeriesItem = typeof protector_series_items.$inferSelect;

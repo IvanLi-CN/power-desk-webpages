@@ -1,11 +1,16 @@
-To install dependencies:
-```sh
-bun install
+# Power Desk Web Server
+
+
+## Development
+
+### Generate the Migration
+
+```shell
+bunx drizzle-kit generate --name <migration-name>
 ```
 
-To run:
-```sh
-bun run dev
-```
+### Apply All Migrations
 
-open http://localhost:3000
+```shell
+bunx drizzle-kit migrate
+```

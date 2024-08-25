@@ -10,6 +10,7 @@ import {
 import {
   charge_channel_series_items,
   devices as dbDevices,
+  protector_series_items,
 } from "../db/schema.ts";
 import { config } from "./config.ts";
 import { db } from "./db.ts";
@@ -32,7 +33,6 @@ const messages$ = messagesSubject.pipe(shareReplay(1), takeUntil(exit$));
 
 client.on("message", (rawTopic, message) => {
   const topic = rawTopic.replace(config.MQTT_PREFIX, "");
-  console.log(`Received message on topic ${topic}: ${message.toString("hex")}`);
   messagesSubject.next({ topic, message, timestamp: Date.now() });
 });
 
@@ -111,6 +111,26 @@ function recordToDB() {
         }
 
         await db.insert(charge_channel_series_items).values(item);
+      }),
+      retry(5),
+    )
+    .subscribe({
+      error: (error) => {
+        console.error(error);
+      },
+    });
+
+  parsedTemperatures$
+    .pipe(
+      concatMap(async (item) => {
+        if (!devices.some((d) => d.id === item.deviceId)) {
+          await db
+            .insert(dbDevices)
+            .values({ id: item.deviceId, name: item.deviceId })
+            .onConflictDoNothing();
+        }
+
+        await db.insert(protector_series_items).values(item);
       }),
       retry(5),
     )
