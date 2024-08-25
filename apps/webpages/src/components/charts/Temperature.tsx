@@ -119,15 +119,15 @@ const TemperatureChart: FC<TemperatureChartProps> = ({ deviceId }) => {
 
   const updateTemperatures = useCallback(
     (item: ProtectorSeriesItem) => {
-      data.labels.push(format(item.timestamp, "HH:mm:ss"));
-      data.datasets[0].data.push(item.values.temperature_0);
-      data.datasets[1].data.push(item.values.temperature_1);
-
-      while (data.labels.length > bufferSize) {
+      if (data.labels.length > bufferSize) {
         data.labels.shift();
         data.datasets[0].data.shift();
         data.datasets[1].data.shift();
       }
+
+      data.labels.push(format(item.timestamp, "HH:mm:ss"));
+      data.datasets[0].data.push(item.values.temperature_0);
+      data.datasets[1].data.push(item.values.temperature_1);
 
       updateChart();
     },
