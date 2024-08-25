@@ -4,6 +4,7 @@ import {
   deserializeTemperatures,
 } from "../helpers/mqtt-seraiallization.ts";
 import type { ChargeChannelSeriesItem } from "../models/charge-channel-series-item.ts";
+import type { ProtectorSeriesItem } from "../models/protector-series-item.ts";
 
 const eventSourceMap = new Map<
   string,
@@ -29,9 +30,9 @@ export const useDeviceSeriesEventSource = (
   useDeviceEventSource(deviceId, "series", handleMessage);
 };
 
-export const useDeviceTemperaturesEventSource = (
+export const useDeviceProtectorEventSource = (
   deviceId: string,
-  cb: (value: number[]) => void,
+  cb: (value: ProtectorSeriesItem) => void,
 ) => {
   const handleMessage = useCallback(
     (event: MessageEvent) => {
@@ -42,12 +43,12 @@ export const useDeviceTemperaturesEventSource = (
     [cb],
   );
 
-  useDeviceEventSource(deviceId, "temperatures", handleMessage);
+  useDeviceEventSource(deviceId, "protector", handleMessage);
 };
 
 export const useDeviceEventSource = (
   deviceId: string,
-  type: "series" | "temperatures",
+  type: "series" | "protector",
   cb: (event: MessageEvent) => void,
 ) => {
   useEffect(() => {

@@ -18,8 +18,9 @@ import { format } from "date-fns";
 import { type FC, useCallback, useMemo } from "react";
 import { useDebounceCallback } from "usehooks-ts";
 import { useChartColors } from "../../hooks/useChartColors.ts";
-import { useDeviceTemperaturesEventSource } from "../../hooks/useDeviceEventSource.ts";
+import { useDeviceProtectorEventSource } from "../../hooks/useDeviceEventSource.ts";
 import { useGlobalConfig } from "../../hooks/useGlobalConfig.ts";
+import type { ProtectorSeriesItem } from "../../models/protector-series-item.ts";
 
 ChartJS.register(
   Title,
@@ -117,13 +118,12 @@ const TemperatureChart: FC<TemperatureChartProps> = ({ deviceId }) => {
   );
 
   const updateTemperatures = useCallback(
-    (temperature: number[]) => {
-      data.labels.push(format(Date.now(), "HH:mm:ss"));
-      data.datasets[0].data.push(temperature[0]);
-      data.datasets[1].data.push(temperature[1]);
-      console.log(temperature);
+    (item: ProtectorSeriesItem) => {
+      data.labels.push(format(item.timestamp, "HH:mm:ss"));
+      data.datasets[0].data.push(item.values.temperature_0);
+      data.datasets[1].data.push(item.values.temperature_1);
 
-      if (data.labels.length > bufferSize) {
+      while (data.labels.length > bufferSize) {
         data.labels.shift();
         data.datasets[0].data.shift();
         data.datasets[1].data.shift();
@@ -134,7 +134,7 @@ const TemperatureChart: FC<TemperatureChartProps> = ({ deviceId }) => {
     [data, updateChart, bufferSize],
   );
 
-  useDeviceTemperaturesEventSource(deviceId, updateTemperatures);
+  useDeviceProtectorEventSource(deviceId, updateTemperatures);
 
   return (
     <ReactChart

@@ -1,12 +1,12 @@
 import { AbnormalCaseResponse } from "../models/abnormal-case.ts";
 import type { ChargeChannelSeriesItem } from "../models/charge-channel-series-item.ts";
+import type { ProtectorSeriesItem } from "../models/protector-series-item.ts";
 import { ProtocolIndicationResponse } from "../models/protocol-indication.ts";
 import { SystemStatusResponse } from "../models/system-status.ts";
 
-export function deserializeTemperatures(message: string) {
+export function deserializeTemperatures(message: string): ProtectorSeriesItem {
   const data: {
     timestamp: number;
-    channel: number;
     deviceId: string;
     values: string;
   } = JSON.parse(message);
@@ -19,10 +19,14 @@ export function deserializeTemperatures(message: string) {
 
   const dv = new DataView(buff.buffer);
 
-  const temperatures: number[] = [];
-  temperatures.push(dv.getFloat32(buff.byteOffset + 0, true));
-  temperatures.push(dv.getFloat32(buff.byteOffset + 4, true));
-  return temperatures;
+  const item = {
+    ...data,
+    values: {
+      temperature_0: dv.getFloat32(buff.byteOffset + 0, true),
+      temperature_1: dv.getFloat32(buff.byteOffset + 4, true),
+    },
+  } satisfies ProtectorSeriesItem;
+  return item;
 }
 
 export function deserializeChargeChannelSeriesItem(

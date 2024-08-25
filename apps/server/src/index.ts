@@ -63,7 +63,7 @@ app.get("/api/devices/:deviceId", (c) => {
             deviceId: item.deviceId,
             values: item.values.toString("base64"),
           }),
-          event: "temperatures",
+          event: "protector",
           id: `${item.deviceId}-${item.timestamp}`,
         });
       },
