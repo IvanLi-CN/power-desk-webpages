@@ -1,3 +1,4 @@
+import { TinyColor } from "@ctrl/tinycolor";
 import {
   CategoryScale,
   type ChartData,
@@ -16,6 +17,7 @@ import { ReactChart } from "chartjs-react";
 import { format } from "date-fns";
 import { type FC, useCallback, useMemo } from "react";
 import { useDebounceCallback } from "usehooks-ts";
+import { useChartColors } from "../../hooks/useChartColors.ts";
 import { useDeviceTemperaturesEventSource } from "../../hooks/useDeviceEventSource.ts";
 import { useGlobalConfig } from "../../hooks/useGlobalConfig.ts";
 
@@ -38,6 +40,7 @@ export type TemperatureChartProps = {
 const TemperatureChart: FC<TemperatureChartProps> = ({ deviceId }) => {
   const chartId = useMemo(() => `${deviceId}-temperature-chart`, [deviceId]);
   const { bufferSize } = useGlobalConfig();
+  const { temperature: temperatureColor } = useChartColors();
 
   const data = useMemo(
     () =>
@@ -45,18 +48,30 @@ const TemperatureChart: FC<TemperatureChartProps> = ({ deviceId }) => {
         labels: [] as string[],
         datasets: [
           {
-            label: "Temperature",
+            label: "Board 0",
             cubicInterpolationMode: "monotone",
             tension: 0.7,
             data: [] as number[],
-            borderColor: "#ff6384",
-            backgroundColor: "rgba(255, 99, 132, 0.5)",
-            fill: true,
+            borderColor: new TinyColor(temperatureColor)
+              .lighten(10)
+              .toHexString(),
+            fill: false,
+            pointStyle: "line",
+          },
+          {
+            label: "Board 1",
+            cubicInterpolationMode: "monotone",
+            tension: 0.7,
+            data: [] as number[],
+            borderColor: new TinyColor(temperatureColor)
+              .darken(10)
+              .toHexString(),
+            fill: false,
             pointStyle: "line",
           },
         ],
       }) satisfies ChartData,
-    [],
+    [temperatureColor],
   );
 
   const options = useMemo(
@@ -105,10 +120,13 @@ const TemperatureChart: FC<TemperatureChartProps> = ({ deviceId }) => {
     (temperature: number[]) => {
       data.labels.push(format(Date.now(), "HH:mm:ss"));
       data.datasets[0].data.push(temperature[0]);
+      data.datasets[1].data.push(temperature[1]);
+      console.log(temperature);
 
       if (data.labels.length > bufferSize) {
         data.labels.shift();
         data.datasets[0].data.shift();
+        data.datasets[1].data.shift();
       }
 
       updateChart();

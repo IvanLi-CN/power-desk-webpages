@@ -20,11 +20,8 @@ export function deserializeTemperatures(message: string) {
   const dv = new DataView(buff.buffer);
 
   const temperatures: number[] = [];
-  for (let i = 0; i < buff.length; i += 8) {
-    const temperature = dv.getFloat32(buff.byteOffset + i, true);
-    temperatures.push(temperature);
-  }
-
+  temperatures.push(dv.getFloat32(buff.byteOffset + 0, true));
+  temperatures.push(dv.getFloat32(buff.byteOffset + 4, true));
   return temperatures;
 }
 

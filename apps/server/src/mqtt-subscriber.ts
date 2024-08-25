@@ -80,7 +80,7 @@ export const parsedTemperatures$ = new Observable<DeviceTemperatures>(
   (subscriber) => {
     const subscription = messages$.subscribe((pkg) => {
       const [device, type] = pkg.topic.split("/");
-      if (type !== "temperature") {
+      if (type !== "protector") {
         return;
       }
 
