@@ -17,6 +17,7 @@ import { format } from "date-fns";
 import { type FC, useCallback, useMemo } from "react";
 import { useDebounceCallback } from "usehooks-ts";
 import { useDeviceTemperaturesEventSource } from "../../hooks/useDeviceEventSource.ts";
+import { useGlobalConfig } from "../../hooks/useGlobalConfig.ts";
 
 ChartJS.register(
   Title,
@@ -36,6 +37,7 @@ export type TemperatureChartProps = {
 
 const TemperatureChart: FC<TemperatureChartProps> = ({ deviceId }) => {
   const chartId = useMemo(() => `${deviceId}-temperature-chart`, [deviceId]);
+  const { bufferSize } = useGlobalConfig();
 
   const data = useMemo(
     () =>
@@ -104,14 +106,14 @@ const TemperatureChart: FC<TemperatureChartProps> = ({ deviceId }) => {
       data.labels.push(format(Date.now(), "HH:mm:ss"));
       data.datasets[0].data.push(temperature[0]);
 
-      if (data.labels.length > 60 * 30) {
+      if (data.labels.length > bufferSize) {
         data.labels.shift();
         data.datasets[0].data.shift();
       }
 
       updateChart();
     },
-    [data, updateChart],
+    [data, updateChart, bufferSize],
   );
 
   useDeviceTemperaturesEventSource(deviceId, updateTemperatures);

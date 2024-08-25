@@ -13,10 +13,10 @@ const configSchema = z.object({
 
   MQTT_URL: z.string().url(),
   MQTT_PREFIX: z.string().default("power-desk/"),
-  MQTT_BUFFER_SIZE: z
+  BUFFER_SIZE: z
     .string()
     .regex(/^\d+$/)
-    .default("1000")
+    .default("1800") // 30 minutes, one item per second
     .transform(Number)
     .refine((port) => port >= 0 && port <= 65535, {
       message: "MQTT_BUFFER_SIZE must be between 1 and 65535",

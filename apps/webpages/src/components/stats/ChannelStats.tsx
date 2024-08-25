@@ -8,6 +8,7 @@ import { useTranslation } from "react-i18next";
 import { useDebounceCallback } from "usehooks-ts";
 import { useChartColors } from "../../hooks/useChartColors.js";
 import { useDeviceSeriesEventSource } from "../../hooks/useDeviceEventSource.js";
+import { useGlobalConfig } from "../../hooks/useGlobalConfig.js";
 import type { ChargeChannelSeriesItem } from "../../models/charge-channel-series-item.js";
 import {
   PdVersion,
@@ -86,6 +87,8 @@ const powerOptions = mergeDeepLeft(baseOptions, {
 
 const ChannelStats: FC<ChannelStatsProps> = ({ deviceId, channel }) => {
   const { t } = useTranslation(["stat", "unit", "common"]);
+  const { bufferSize } = useGlobalConfig();
+  const maxItems = useMemo(() => Math.min(bufferSize, 60), [bufferSize]);
 
   const voltageChartId = useMemo(
     () => `${deviceId}-ch${channel}-voltage-chart`,
@@ -248,7 +251,7 @@ const ChannelStats: FC<ChannelStatsProps> = ({ deviceId, channel }) => {
       if (value.channel === channel && value.deviceId === deviceId) {
         setSeriesItem(value);
 
-        if (currentData.labels.length > 60) {
+        if (currentData.labels.length > maxItems) {
           currentData.labels.shift();
           currentData.datasets[0].data.shift();
           currentData.datasets[1].data.shift();
@@ -284,6 +287,7 @@ const ChannelStats: FC<ChannelStatsProps> = ({ deviceId, channel }) => {
       updateVoltageChart,
       updateCurrentChart,
       updatePowerChart,
+      maxItems,
     ],
   );
 

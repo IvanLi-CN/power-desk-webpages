@@ -10,7 +10,6 @@ export default defineConfig(({ mode }) => {
       proxy: {
         "/api": {
           target: env.API_URL || "http://localhost:24081",
-          rewrite: (path) => path.replace(/^\/api/, ""),
           changeOrigin: true,
           ws: true,
           timeout: 0,

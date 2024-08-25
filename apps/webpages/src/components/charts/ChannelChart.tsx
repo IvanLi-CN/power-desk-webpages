@@ -17,6 +17,7 @@ import { format } from "date-fns";
 import { type FC, useCallback, useMemo } from "react";
 import { useDebounceCallback } from "usehooks-ts";
 import { useDeviceSeriesEventSource } from "../../hooks/useDeviceEventSource.ts";
+import { useGlobalConfig } from "../../hooks/useGlobalConfig.ts";
 import type { ChargeChannelSeriesItem } from "../../models/charge-channel-series-item.ts";
 
 ChartJS.register(
@@ -41,6 +42,7 @@ const ChannelChart: FC<ChannelChartProps> = ({ deviceId, channel }) => {
     () => `${deviceId}-ch${channel}-chart`,
     [deviceId, channel],
   );
+  const { bufferSize } = useGlobalConfig();
 
   const data = useMemo(
     () =>
@@ -133,7 +135,7 @@ const ChannelChart: FC<ChannelChartProps> = ({ deviceId, channel }) => {
   const updateSeriesItem = useCallback(
     (value: ChargeChannelSeriesItem) => {
       if (value.channel === channel && value.deviceId === deviceId) {
-        if (data.labels.length > 1800) {
+        if (data.labels.length > bufferSize) {
           data.labels.shift();
           for (const dataset of data.datasets) {
             dataset.data.shift();
@@ -148,7 +150,7 @@ const ChannelChart: FC<ChannelChartProps> = ({ deviceId, channel }) => {
         updateChart();
       }
     },
-    [deviceId, channel, data, updateChart],
+    [deviceId, channel, data, updateChart, bufferSize],
   );
 
   useDeviceSeriesEventSource(deviceId, updateSeriesItem);

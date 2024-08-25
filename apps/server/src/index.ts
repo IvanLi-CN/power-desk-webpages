@@ -4,6 +4,7 @@ import { migrate } from "drizzle-orm/bun-sqlite/migrator";
 import { serveStatic } from "hono/bun";
 import { streamSSE } from "hono/streaming";
 import { filter } from "rxjs";
+import { config } from "./config.ts";
 import { db } from "./db.ts";
 
 migrate(db, { migrationsFolder: "./drizzle" });
@@ -13,8 +14,6 @@ const { parsedChannelSeriesItem$, parsedTemperatures$ } = await import(
 );
 
 const app = new Hono();
-
-const id = 0;
 
 app.get("/api/devices/:deviceId", (c) => {
   const deviceId = c.req.param("deviceId");
@@ -82,6 +81,8 @@ app.get("/api/devices/:deviceId", (c) => {
     seriesSubscription.unsubscribe();
   });
 });
+
+app.get("/api/config", (c) => c.json({ buffer_size: config.BUFFER_SIZE }));
 
 app.get(
   "/*",

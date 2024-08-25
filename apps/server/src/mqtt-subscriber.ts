@@ -74,7 +74,7 @@ export const parsedChannelSeriesItem$ = new Observable<ChargeChannelSeriesItem>(
       subscription.unsubscribe();
     };
   },
-).pipe(shareReplay(config.MQTT_BUFFER_SIZE), takeUntil(exit$));
+).pipe(shareReplay(config.BUFFER_SIZE), takeUntil(exit$));
 
 export const parsedTemperatures$ = new Observable<DeviceTemperatures>(
   (subscriber) => {
@@ -95,7 +95,7 @@ export const parsedTemperatures$ = new Observable<DeviceTemperatures>(
       subscription.unsubscribe();
     };
   },
-).pipe(shareReplay(config.MQTT_BUFFER_SIZE), takeUntil(exit$));
+).pipe(shareReplay(config.BUFFER_SIZE), takeUntil(exit$));
 
 const devices = await db.query.devices.findMany();
 
