@@ -252,9 +252,17 @@ const ChannelStats: FC<ChannelStatsProps> = ({ deviceId, channel }) => {
         setSeriesItem(value);
 
         if (currentData.labels.length > maxItems) {
+          voltageData.labels.shift();
+          voltageData.datasets[0].data.shift();
+          voltageData.datasets[1].data.shift();
+
           currentData.labels.shift();
           currentData.datasets[0].data.shift();
           currentData.datasets[1].data.shift();
+
+          powerData.labels.shift();
+          powerData.datasets[0].data.shift();
+          powerData.datasets[1].data.shift();
         }
 
         voltageData.labels.push(value.timestamp.toString());
