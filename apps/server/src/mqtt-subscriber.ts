@@ -43,7 +43,7 @@ type ChargeChannelSeriesItem = {
   values: Buffer;
 };
 
-type DeviceTemperatures = {
+type DeviceProtectorSeriesItem = {
   deviceId: string;
   timestamp: number;
   values: Buffer;
@@ -76,8 +76,8 @@ export const parsedChannelSeriesItem$ = new Observable<ChargeChannelSeriesItem>(
   },
 ).pipe(shareReplay(config.BUFFER_SIZE), takeUntil(exit$));
 
-export const parsedTemperatures$ = new Observable<DeviceTemperatures>(
-  (subscriber) => {
+export const parsedProtectorSeriesItem$ =
+  new Observable<DeviceProtectorSeriesItem>((subscriber) => {
     const subscription = messages$.subscribe((pkg) => {
       const [device, type] = pkg.topic.split("/");
       if (type !== "protector") {
@@ -94,8 +94,7 @@ export const parsedTemperatures$ = new Observable<DeviceTemperatures>(
     return () => {
       subscription.unsubscribe();
     };
-  },
-).pipe(shareReplay(config.BUFFER_SIZE), takeUntil(exit$));
+  }).pipe(shareReplay(config.BUFFER_SIZE), takeUntil(exit$));
 
 const devices = await db.query.devices.findMany();
 
@@ -120,7 +119,7 @@ function recordToDB() {
       },
     });
 
-  parsedTemperatures$
+  parsedProtectorSeriesItem$
     .pipe(
       concatMap(async (item) => {
         if (!devices.some((d) => d.id === item.deviceId)) {

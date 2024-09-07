@@ -9,7 +9,7 @@ import { db } from "./db.ts";
 
 migrate(db, { migrationsFolder: "./drizzle" });
 
-const { parsedChannelSeriesItem$, parsedTemperatures$ } = await import(
+const { parsedChannelSeriesItem$, parsedProtectorSeriesItem$ } = await import(
   "./mqtt-subscriber.ts"
 );
 
@@ -24,7 +24,7 @@ app.get("/api/devices/:deviceId", (c) => {
     }),
   );
 
-  const filteredTemperatures$ = parsedTemperatures$.pipe(
+  const filteredTemperatures$ = parsedProtectorSeriesItem$.pipe(
     filter((item) => {
       return deviceId === "*" || item.deviceId === deviceId;
     }),

@@ -9,9 +9,10 @@
       "request": "launch",
       "name": "Launch Chrome against localhost",
       "url": "http://localhost:5173/devices/test",
-      "webRoot": "${workspaceFolder}",
+      "webRoot": "${workspaceFolder}/apps/webpages",
       "userDataDir": true,
       "runtimeArgs": ["--disable-web-security"],
+      "sourceMaps": true,
     },
   ],
 }

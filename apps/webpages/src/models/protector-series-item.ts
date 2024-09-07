@@ -7,4 +7,7 @@ export type ProtectorSeriesItem = {
 export type ProtectorSeriesItemValues = {
   temperature_0: number;
   temperature_1: number;
+  millivolts: number;
+  amps: number;
+  watts: number;
 };

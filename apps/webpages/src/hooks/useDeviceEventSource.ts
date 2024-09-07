@@ -1,7 +1,7 @@
 import { useCallback, useEffect } from "react";
 import {
   deserializeChargeChannelSeriesItem,
-  deserializeTemperatures,
+  deserializeProtectorSeriesItem,
 } from "../helpers/mqtt-seraiallization.ts";
 import type { ChargeChannelSeriesItem } from "../models/charge-channel-series-item.ts";
 import type { ProtectorSeriesItem } from "../models/protector-series-item.ts";
@@ -36,7 +36,7 @@ export const useDeviceProtectorEventSource = (
 ) => {
   const handleMessage = useCallback(
     (event: MessageEvent) => {
-      const value = deserializeTemperatures(event.data);
+      const value = deserializeProtectorSeriesItem(event.data);
 
       cb(value);
     },

@@ -4,7 +4,9 @@ import type { ProtectorSeriesItem } from "../models/protector-series-item.ts";
 import { ProtocolIndicationResponse } from "../models/protocol-indication.ts";
 import { SystemStatusResponse } from "../models/system-status.ts";
 
-export function deserializeTemperatures(message: string): ProtectorSeriesItem {
+export function deserializeProtectorSeriesItem(
+  message: string,
+): ProtectorSeriesItem {
   const data: {
     timestamp: number;
     deviceId: string;
@@ -24,6 +26,9 @@ export function deserializeTemperatures(message: string): ProtectorSeriesItem {
     values: {
       temperature_0: dv.getFloat32(buff.byteOffset + 0, true),
       temperature_1: dv.getFloat32(buff.byteOffset + 4, true),
+      millivolts: dv.getFloat64(buff.byteOffset + 8, true),
+      amps: dv.getFloat64(buff.byteOffset + 16, true),
+      watts: dv.getFloat64(buff.byteOffset + 24, true),
     },
   } satisfies ProtectorSeriesItem;
   return item;

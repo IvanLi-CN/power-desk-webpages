@@ -3,6 +3,7 @@ import invariant from "tiny-invariant";
 import ChannelChart from "./components/charts/ChannelChart.js";
 import TemperatureChart from "./components/charts/Temperature.js";
 import ChannelStats from "./components/stats/ChannelStats.js";
+import SystemStats from "./components/stats/SystemStats.js";
 
 export default function Index() {
   const { deviceId } = { deviceId: "test" };
@@ -16,6 +17,7 @@ export default function Index() {
     <div className="font-sans p-4">
       <h2 className="text-xl">{deviceId}</h2>
       <div className="grid 3xl:grid-cols-2 grid-cols-1 gap-4">
+        <SystemStats deviceId={deviceId} />
         <ChannelStats deviceId={deviceId} channel={0} />
         <ChannelStats deviceId={deviceId} channel={1} />
         <ChannelStats deviceId={deviceId} channel={2} />
