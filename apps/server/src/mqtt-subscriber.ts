@@ -19,7 +19,10 @@ import { exit$ } from "./shared.ts";
 const client = mqtt.connect(config.MQTT_URL);
 client.on("connect", () => {
   client.subscribe(`${config.MQTT_PREFIX}#`);
-  console.log("Connected to MQTT broker");
+  console.log(
+    "Connected to MQTT broker. Subscribing topics with prefix:",
+    config.MQTT_PREFIX,
+  );
 });
 
 type MQTTMessageItem = {

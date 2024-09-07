@@ -1,11 +1,13 @@
 import { Hono } from "hono";
 
+import type { Serve } from "bun";
 import { migrate } from "drizzle-orm/bun-sqlite/migrator";
 import { serveStatic } from "hono/bun";
 import { streamSSE } from "hono/streaming";
-import { filter } from "rxjs";
+import { filter, takeUntil } from "rxjs";
 import { config } from "./config.ts";
 import { db } from "./db.ts";
+import { exit$ } from "./shared.ts";
 
 migrate(db, { migrationsFolder: "./drizzle" });
 
@@ -22,12 +24,14 @@ app.get("/api/devices/:deviceId", (c) => {
     filter((item) => {
       return deviceId === "*" || item.deviceId === deviceId;
     }),
+    takeUntil(exit$),
   );
 
   const filteredTemperatures$ = parsedProtectorSeriesItem$.pipe(
     filter((item) => {
       return deviceId === "*" || item.deviceId === deviceId;
     }),
+    takeUntil(exit$),
   );
 
   return streamSSE(c, async (stream) => {
@@ -35,6 +39,7 @@ app.get("/api/devices/:deviceId", (c) => {
 
     stream.onAbort(() => {
       aborted = true;
+      console.log("stream aborted");
     });
 
     const seriesSubscription = filteredSeries$.subscribe({
@@ -51,6 +56,7 @@ app.get("/api/devices/:deviceId", (c) => {
         });
       },
       error: (error) => {
+        console.log("charge series error", error);
         console.error(error);
         aborted = true;
       },
@@ -68,6 +74,7 @@ app.get("/api/devices/:deviceId", (c) => {
         });
       },
       error: (error) => {
+        console.log("temperatures error", error);
         console.error(error);
         aborted = true;
       },
@@ -100,4 +107,8 @@ app.get(
   }),
 );
 
-export default app;
+export default {
+  fetch: app.fetch,
+  port: config.PORT,
+  idleTimeout: 0, // fix sse aborted early
+} satisfies Serve;
