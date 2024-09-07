@@ -93,11 +93,20 @@ const SystemStats: FC<SystemStatsProps> = ({ deviceId }) => {
   const { bufferSize } = useGlobalConfig();
   const maxItems = useMemo(() => Math.min(bufferSize, 60), [bufferSize]);
 
-  const voltageChartId = useMemo(() => `${deviceId}-voltage-chart`, [deviceId]);
-  const currentChartId = useMemo(() => `${deviceId}-current-chart`, [deviceId]);
-  const powerChartId = useMemo(() => `${deviceId}-power-chart`, [deviceId]);
+  const voltageChartId = useMemo(
+    () => `${deviceId}-stats-voltage-chart`,
+    [deviceId],
+  );
+  const currentChartId = useMemo(
+    () => `${deviceId}-stats-current-chart`,
+    [deviceId],
+  );
+  const powerChartId = useMemo(
+    () => `${deviceId}-stats-power-chart`,
+    [deviceId],
+  );
   const temperatureChartId = useMemo(
-    () => `${deviceId}-temperature-chart`,
+    () => `${deviceId}-stats-temperature-chart`,
     [deviceId],
   );
 
