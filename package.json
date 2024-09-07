@@ -7,5 +7,6 @@
     "dev": "bun --filter=\"*\" run dev",
     "format": "bun --filter=\"*\" run format",
     "lint": "bun --filter=\"*\" run lint"
-  }
+  },
+  "devDependencies": {}
 }

@@ -1,6 +1,9 @@
 import { AbnormalCaseResponse } from "../models/abnormal-case.ts";
 import type { ChargeChannelSeriesItem } from "../models/charge-channel-series-item.ts";
-import type { ProtectorSeriesItem } from "../models/protector-series-item.ts";
+import type {
+  ProtectorSeriesItem,
+  VinStatus,
+} from "../models/protector-series-item.ts";
 import { ProtocolIndicationResponse } from "../models/protocol-indication.ts";
 import { SystemStatusResponse } from "../models/system-status.ts";
 
@@ -29,6 +32,7 @@ export function deserializeProtectorSeriesItem(
       millivolts: dv.getFloat64(buff.byteOffset + 8, true),
       amps: dv.getFloat64(buff.byteOffset + 16, true),
       watts: dv.getFloat64(buff.byteOffset + 24, true),
+      vin_status: dv.getUint8(buff.byteOffset + 32) as VinStatus,
     },
   } satisfies ProtectorSeriesItem;
   return item;

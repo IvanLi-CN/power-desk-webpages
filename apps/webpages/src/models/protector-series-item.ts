@@ -10,4 +10,11 @@ export type ProtectorSeriesItemValues = {
   millivolts: number;
   amps: number;
   watts: number;
+  vin_status: VinStatus;
 };
+
+export enum VinStatus {
+  Normal = 0,
+  Shutdown = 1,
+  Protection = 2,
+}

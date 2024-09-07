@@ -1,6 +1,7 @@
 import { TinyColor } from "@ctrl/tinycolor";
 import { type ChartData, Chart as ChartJS, type ChartOptions } from "chart.js";
 import { ReactChart } from "chartjs-react";
+import clsx from "clsx";
 import { mergeDeepLeft } from "ramda";
 import type { FC } from "react";
 import { useCallback, useMemo, useState } from "react";
@@ -9,7 +10,10 @@ import { useDebounceCallback } from "usehooks-ts";
 import { useChartColors } from "../../hooks/useChartColors.js";
 import { useDeviceProtectorEventSource } from "../../hooks/useDeviceEventSource.js";
 import { useGlobalConfig } from "../../hooks/useGlobalConfig.js";
-import type { ProtectorSeriesItem } from "../../models/protector-series-item.js";
+import {
+  type ProtectorSeriesItem,
+  VinStatus,
+} from "../../models/protector-series-item.js";
 
 interface SystemStatsProps {
   deviceId: string;
@@ -382,6 +386,21 @@ const SystemStats: FC<SystemStatsProps> = ({ deviceId }) => {
             minimumIntegerDigits: 2,
           })}
         </div>
+        <button
+          className={clsx(
+            "absolute right-4 top-4",
+            "btn btn-circle ",
+            {
+              "btn-primary": seriesItem?.values.vin_status === VinStatus.Normal,
+            },
+            "p-2",
+            "flex items-center justify-center",
+            "rounded-full",
+          )}
+          type="button"
+        >
+          <span className="iconify fa--power-off text-3xl" />
+        </button>
       </div>
 
       {/* Current */}
