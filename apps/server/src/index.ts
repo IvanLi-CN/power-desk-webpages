@@ -131,8 +131,4 @@ app.get(
   }),
 );
 
-export default {
-  fetch: app.fetch,
-  port: config.PORT,
-  idleTimeout: 0, // fix sse aborted early
-} satisfies Serve;
+export default app;
