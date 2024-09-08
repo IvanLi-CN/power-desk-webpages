@@ -1,19 +1,24 @@
 import { Hono } from "hono";
 
+import { zValidator } from "@hono/zod-validator";
 import type { Serve } from "bun";
 import { migrate } from "drizzle-orm/bun-sqlite/migrator";
 import { serveStatic } from "hono/bun";
 import { streamSSE } from "hono/streaming";
 import { filter, takeUntil } from "rxjs";
+import { z } from "zod";
 import { config } from "./config.ts";
 import { db } from "./db.ts";
+import {
+  parsedChannelSeriesItem$,
+  parsedProtectorSeriesItem$,
+  setVinStatus,
+} from "./mqtt-client.ts";
 import { exit$ } from "./shared.ts";
 
 migrate(db, { migrationsFolder: "./drizzle" });
 
-const { parsedChannelSeriesItem$, parsedProtectorSeriesItem$ } = await import(
-  "./mqtt-subscriber.ts"
-);
+await import("./mqtt-subscriber.ts");
 
 const app = new Hono();
 
@@ -90,6 +95,25 @@ app.get("/api/devices/:deviceId", (c) => {
 });
 
 app.get("/api/config", (c) => c.json({ buffer_size: config.BUFFER_SIZE }));
+
+app.post(
+  "/api/devices/:deviceId",
+  zValidator(
+    "json",
+    z.object({ vin_status: z.number().int().min(0).max(2).optional() }),
+  ),
+  async (c) => {
+    const deviceId = c.req.param("deviceId");
+
+    const { vin_status } = c.req.valid("json");
+
+    if (vin_status !== undefined) {
+      setVinStatus(deviceId, vin_status);
+    }
+
+    return c.text("", 204);
+  },
+);
 
 app.get(
   "/*",

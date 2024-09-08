@@ -365,6 +365,21 @@ const SystemStats: FC<SystemStatsProps> = ({ deviceId }) => {
     return Math.max(...temperatures);
   }, [seriesItem]);
 
+  const updateVinStatus = useCallback(
+    (value: VinStatus) => {
+      fetch(`/api/devices/${deviceId}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          vin_status: value,
+        }),
+      });
+    },
+    [deviceId],
+  );
+
   return (
     <div className="stats shadow w-full h-full stats-vertical lg:grid-cols-4 lg:stats-horizontal">
       {/* Voltage */}
@@ -398,6 +413,13 @@ const SystemStats: FC<SystemStatsProps> = ({ deviceId }) => {
             "rounded-full",
           )}
           type="button"
+          onClick={() =>
+            updateVinStatus(
+              seriesItem?.values.vin_status === VinStatus.Normal
+                ? VinStatus.Shutdown
+                : VinStatus.Normal,
+            )
+          }
         >
           <span className="iconify fa--power-off text-3xl" />
         </button>
