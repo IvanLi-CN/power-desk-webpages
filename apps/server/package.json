@@ -5,11 +5,11 @@
     "dev": "bun run --hot src/index.ts"
   },
   "dependencies": {
-    "@hono/zod-validator": "^0.2.2",
-    "drizzle-kit": "^0.24.2",
-    "drizzle-orm": "^0.33.0",
-    "hono": "^4.5.11",
-    "mqtt": "^5.10.1",
+    "@hono/zod-validator": "^0.4.1",
+    "drizzle-kit": "^0.28.1",
+    "drizzle-orm": "^0.36.4",
+    "hono": "^4.6.12",
+    "mqtt": "^5.10.3",
     "rxjs": "^7.8.1",
     "zod": "^3.23.8"
   },

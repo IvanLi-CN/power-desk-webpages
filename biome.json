@@ -13,12 +13,14 @@
     "lineEnding": "lf",
     "lineWidth": 80
   },
-  "organizeImports": { "enabled": true },
+  "organizeImports": {
+    "enabled": true
+  },
   "linter": {
     "enabled": true,
     "rules": {
       "recommended": true,
-      "nursery": {
+      "correctness": {
         "useImportExtensions": "error"
       },
       "style": {
@@ -38,7 +40,11 @@
       "bracketSameLine": false
     }
   },
-  "json": { "formatter": { "trailingCommas": "none" } },
+  "json": {
+    "formatter": {
+      "trailingCommas": "none"
+    }
+  },
   "files": {
     "ignore": [
       "**/node_modules",
@@ -53,8 +59,13 @@
     {
       "include": [".vscode/**"],
       "json": {
-        "formatter": { "trailingCommas": "all" },
-        "parser": { "allowComments": true, "allowTrailingCommas": true }
+        "formatter": {
+          "trailingCommas": "all"
+        },
+        "parser": {
+          "allowComments": true,
+          "allowTrailingCommas": true
+        }
       }
     }
   ]
